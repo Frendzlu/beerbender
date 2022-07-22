@@ -16,4 +16,8 @@ export class World {
 		let ff = new FloorFactory(options.floorAmount, options.floorOptions)
 		this.floors = Array(options.floorAmount).fill(undefined).map(() => ff.createFloor())
 	}
+
+	generateConnectionsFromSeed(seed: number) {
+		console.log(seed)
+	}
 }
