@@ -1,12 +1,10 @@
 import Floor, {FloorFactory, FloorOptions} from "./Floor";
 import {Physics} from "./Physics";
-import IPhysicalProperties = Physics.IPhysicalProperties;
-
 
 export interface WorldGenerationData {
 	floorAmount: number
 	floorOptions?: Partial<FloorOptions>
-	physicalProperties?: Partial<IPhysicalProperties>
+	physicalProperties?: Partial<Physics.IPhysicalProperties>
 }
 
 export class World {

@@ -1,4 +1,4 @@
-import Room from "./Room";
+import Room, {RoomFactory} from "./Room";
 
 export interface FloorOptions {
 	initialRoomNumber: number
