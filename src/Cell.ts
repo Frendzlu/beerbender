@@ -8,8 +8,8 @@ export interface RoomConnection {
 	isOpen: boolean
 }
 
-export class RoomFactory {
-	currentRoomNumber = 0
+export class CellFactory {
+	currentCellNumber = 0
 	floorNumber: number
 	roomAmount: number
 
@@ -20,23 +20,23 @@ export class RoomFactory {
 
 
 	createRoom(multiplier: number, numberOfOutwardConnections: number) {
-		this.currentRoomNumber++
-		let room = new Room(this.floorNumber, this.currentRoomNumber)
-		room.addConnection(this.floorNumber, this.currentRoomNumber < this.roomAmount ? this.currentRoomNumber+1 : 1)
-		room.addConnection(this.floorNumber, this.currentRoomNumber > 1 ? this.currentRoomNumber-1 : this.roomAmount)
+		this.currentCellNumber++
+		let room = new Cell(this.floorNumber, this.currentCellNumber)
+		room.addConnection(this.floorNumber, this.currentCellNumber < this.roomAmount ? this.currentCellNumber+1 : 1)
+		room.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.roomAmount)
 		if (this.floorNumber > 1) {
 			room.addConnection(this.floorNumber - 1, Math.ceil(this.roomAmount / multiplier))
 		}
 		if (numberOfOutwardConnections > 0) {
 			for (let i = 0; i < numberOfOutwardConnections; i++) {
-				room.addConnection(this.floorNumber + 1, this.currentRoomNumber + i)
+				room.addConnection(this.floorNumber + 1, this.currentCellNumber + i)
 			}
 		}
 		return room
 	}
 }
 
-export default class Room {
+export default class Cell {
 	connections: RoomConnection[]
 	id: RoomId
 

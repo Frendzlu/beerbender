@@ -17,7 +17,5 @@ export class World {
 		this.floors = Array(options.floorAmount).fill(undefined).map(() => ff.createFloor())
 	}
 
-	generateConnectionsFromSeed(seed: number) {
-		console.log(seed)
-	}
+
 }

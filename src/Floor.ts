@@ -1,4 +1,4 @@
-import Room, {RoomFactory} from "./Room";
+import Cell, {CellFactory} from "./Cell";
 
 export interface FloorOptions {
 	initialRoomNumber: number
@@ -41,11 +41,11 @@ export class FloorFactory {
 }
 
 export default class Floor {
-	rooms: Room[] // sorted from 12 o'clock clockwise
+	rooms: Cell[] // sorted from 12 o'clock clockwise
 	floorNumber: number
 
 	constructor(numberOfRooms: number, floorNumber: number, roomNumberMultiplier: number, outwardConnectionsAmount: number) {
-		let rf = new RoomFactory(floorNumber, numberOfRooms)
+		let rf = new CellFactory(floorNumber, numberOfRooms)
 		this.floorNumber = floorNumber
 		this.rooms = Array(numberOfRooms)
 			.fill(undefined)
