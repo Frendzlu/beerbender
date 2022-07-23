@@ -1,67 +1,67 @@
-export interface RoomId {
+export interface CellId {
 	floorNumber: number
-	roomNumber: number
+	cellNumber: number
 }
 
-export interface RoomConnection {
-	roomId: RoomId
+export interface CellConnection {
+	cellId: CellId
 	isOpen: boolean
 }
 
 export class CellFactory {
 	currentCellNumber = 0
 	floorNumber: number
-	roomAmount: number
+	cellAmount: number
 
-	constructor(floorNumber: number, roomAmount: number) {
+	constructor(floorNumber: number, cellAmount: number) {
 		this.floorNumber = floorNumber
-		this.roomAmount = roomAmount
+		this.cellAmount = cellAmount
 	}
 
 
-	createRoom(multiplier: number, numberOfOutwardConnections: number) {
+	createCell(multiplier: number, numberOfOutwardConnections: number) {
 		this.currentCellNumber++
-		let room = new Room(this.floorNumber, this.currentCellNumber)
-		room.addConnection(this.floorNumber, this.currentCellNumber < this.roomAmount ? this.currentCellNumber+1 : 1, Math.random() > 0.5)
-		room.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.roomAmount, Math.random() > 0.5)
+		let cell = new Cell(this.floorNumber, this.currentCellNumber)
+		cell.addConnection(this.floorNumber, this.currentCellNumber < this.cellAmount ? this.currentCellNumber+1 : 1, Math.random() > 0.5)
+		cell.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.cellAmount, Math.random() > 0.5)
 		if (this.floorNumber > 1) {
-			room.addConnection(this.floorNumber - 1, Math.ceil(this.currentCellNumber / multiplier), Math.random() > 0.5)
+			cell.addConnection(this.floorNumber - 1, Math.ceil(this.currentCellNumber / multiplier), Math.random() > 0.5)
 		}
 		if (numberOfOutwardConnections > 0) {
 			for (let i = 1; i <= numberOfOutwardConnections; i++) {
-				room.addConnection(this.floorNumber + 1, (this.currentCellNumber - 1) * numberOfOutwardConnections + i, Math.random() > 0.5)
+				cell.addConnection(this.floorNumber + 1, (this.currentCellNumber - 1) * numberOfOutwardConnections + i, Math.random() > 0.5)
 			}
 		}
-		return room
+		return cell
 	}
 }
 
 export default class Cell {
-	connections: RoomConnection[]
-	id: RoomId
+	connections: CellConnection[]
+	id: CellId
 
-	constructor(floorId: number, roomId: number) {
+	constructor(floorId: number, cellId: number) {
 		this.id = {
 			floorNumber: floorId,
-			roomNumber: roomId
+			cellNumber: cellId
 		}
 		this.connections = []
 	}
 
-	addConnection(floorNumber: number, roomNumber: number, open: boolean = false) {
+	addConnection(floorNumber: number, cellNumber: number, open: boolean = false) {
 		this.connections.push({
-			roomId: {
+			cellId: {
 				floorNumber: floorNumber,
-				roomNumber: roomNumber
+				cellNumber: cellNumber
 			},
 			isOpen: open
 		})
 	}
 
-	removeConnection(roomId: RoomId) {
-		let roomConnection = this.connections.find(conn => conn.roomId.roomNumber === roomId.roomNumber && conn.roomId.floorNumber === roomId.floorNumber)
-		if (roomConnection) {
-			this.connections.splice(this.connections.indexOf(roomConnection), 1)
+	removeConnection(cellId: CellId) {
+		let cellConnection = this.connections.find(conn => conn.cellId.cellNumber === cellId.cellNumber && conn.cellId.floorNumber === cellId.floorNumber)
+		if (cellConnection) {
+			this.connections.splice(this.connections.indexOf(cellConnection), 1)
 		}
 	}
 }
