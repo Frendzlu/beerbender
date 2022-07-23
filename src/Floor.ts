@@ -29,8 +29,10 @@ export class FloorFactory {
 	createFloor() {
 		this.currentFloorId++
 		let outwardConnectionsAmount = 1
-		while (this.currentFloorId / (this.currentRoomNumber * this.roomNumberMultiplier) >= this.minRoomSize) {
-			this.currentRoomNumber *= this.roomNumberMultiplier
+		if (this.roomNumberMultiplier > 1){
+			while (this.currentFloorId / (this.currentRoomNumber * this.roomNumberMultiplier) >= this.minRoomSize) {
+				this.currentRoomNumber *= this.roomNumberMultiplier
+			}
 		}
 		if ((this.currentFloorId + 1) / (this.currentRoomNumber * this.roomNumberMultiplier) >= this.minRoomSize) {
 			outwardConnectionsAmount = this.roomNumberMultiplier

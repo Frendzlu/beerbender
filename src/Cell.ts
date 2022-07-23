@@ -21,15 +21,15 @@ export class CellFactory {
 
 	createRoom(multiplier: number, numberOfOutwardConnections: number) {
 		this.currentCellNumber++
-		let room = new Cell(this.floorNumber, this.currentCellNumber)
-		room.addConnection(this.floorNumber, this.currentCellNumber < this.roomAmount ? this.currentCellNumber+1 : 1)
-		room.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.roomAmount)
+		let room = new Room(this.floorNumber, this.currentCellNumber)
+		room.addConnection(this.floorNumber, this.currentCellNumber < this.roomAmount ? this.currentCellNumber+1 : 1, Math.random() > 0.5)
+		room.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.roomAmount, Math.random() > 0.5)
 		if (this.floorNumber > 1) {
-			room.addConnection(this.floorNumber - 1, Math.ceil(this.roomAmount / multiplier))
+			room.addConnection(this.floorNumber - 1, Math.ceil(this.currentCellNumber / multiplier), Math.random() > 0.5)
 		}
 		if (numberOfOutwardConnections > 0) {
-			for (let i = 0; i < numberOfOutwardConnections; i++) {
-				room.addConnection(this.floorNumber + 1, this.currentCellNumber + i)
+			for (let i = 1; i <= numberOfOutwardConnections; i++) {
+				room.addConnection(this.floorNumber + 1, (this.currentCellNumber - 1) * numberOfOutwardConnections + i, Math.random() > 0.5)
 			}
 		}
 		return room
