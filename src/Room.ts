@@ -22,14 +22,14 @@ export class RoomFactory {
 	createRoom(multiplier: number, numberOfOutwardConnections: number) {
 		this.currentRoomNumber++
 		let room = new Room(this.floorNumber, this.currentRoomNumber)
-		room.addConnection(this.floorNumber, this.currentRoomNumber < this.roomAmount ? this.currentRoomNumber+1 : 1)
-		room.addConnection(this.floorNumber, this.currentRoomNumber > 1 ? this.currentRoomNumber-1 : this.roomAmount)
+		room.addConnection(this.floorNumber, this.currentRoomNumber < this.roomAmount ? this.currentRoomNumber+1 : 1, Math.random() > 0.5)
+		room.addConnection(this.floorNumber, this.currentRoomNumber > 1 ? this.currentRoomNumber-1 : this.roomAmount, Math.random() > 0.5)
 		if (this.floorNumber > 1) {
-			room.addConnection(this.floorNumber - 1, Math.ceil(this.roomAmount / multiplier))
+			room.addConnection(this.floorNumber - 1, Math.ceil(this.currentRoomNumber / multiplier), Math.random() > 0.5)
 		}
 		if (numberOfOutwardConnections > 0) {
-			for (let i = 0; i < numberOfOutwardConnections; i++) {
-				room.addConnection(this.floorNumber + 1, this.currentRoomNumber + i)
+			for (let i = 1; i <= numberOfOutwardConnections; i++) {
+				room.addConnection(this.floorNumber + 1, (this.currentRoomNumber - 1) * numberOfOutwardConnections + i, Math.random() > 0.5)
 			}
 		}
 		return room
