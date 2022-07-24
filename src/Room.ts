@@ -1,4 +1,6 @@
-import {FloorOptions} from "./Floor";
+import Cell from "./Cell";
+import {FloorOptions} from "./World";
+import {CELL_SIDES} from "./consts";
 
 export interface RoomId {
   floorNumber: number
@@ -14,46 +16,139 @@ export class RoomFactory {
   currentRoomNumber = 0
   floorAmount: number
   worldOptions: FloorOptions
+  cells: Cell[][]
 
-  //floorNumber: number
-  //roomAmount: number
-
-  constructor(floorAmount: number, worldOptions: FloorOptions) {
+  constructor(floorAmount: number, worldOptions: FloorOptions, cells: Cell[][]) {
     this.floorAmount = floorAmount
     this.worldOptions = worldOptions
-    //this.roomAmount = roomAmount
+    this.cells = cells
   }
 
 
-  createRoom(/*multiplier: number, numberOfOutwardConnections: number*/): Room {
+  createRoom(): Room {
     this.currentRoomNumber++
-    let startFloor = Math.floor(this.floorAmount * Math.random()) + 1
-    let endFloor = Math.min(startFloor + 1 + Math.floor(Math.random() + 0.5), this.floorAmount)
-    let maxCellsOnFloorExact = ((startFloor*2*Math.PI)/this.worldOptions.minimalCellSize)
-    let pow = Math.floor(Math.log2(maxCellsOnFloorExact) / Math.log2(this.worldOptions.cellNumberMultiplier))
-    let maxCellsOnFlorCapped = this.worldOptions.cellNumberMultiplier**pow
-    let startPos = Math.floor(maxCellsOnFlorCapped * Math.random())
-    let endPos = Math.floor(startPos + 1 + 5*Math.random())
-    let room = new Room(this.currentRoomNumber, startFloor, endFloor, startPos, endPos)
+    let room = undefined
+    roomLoop:
+    while (room == undefined){
+      let startFloor = Math.floor(this.floorAmount * Math.random()) + 1
+      let endFloor = Math.min(startFloor + Math.floor(Math.random() + 1.5), this.floorAmount + 1)
+      let startFloorCells = this.cells[startFloor].length
+      let startPos = Math.floor(startFloorCells * Math.random())
+      let endPos = Math.floor(startPos + 1 + 5*Math.random())
+      for (let i = startFloor; i < endFloor; i++){
+        let floorStartPos = startPos
+        let floorEndPos = endPos
+        let cellsFloor = this.cells[i].length
+        let m = undefined
+        if(cellsFloor != startFloorCells){
+          let multi = cellsFloor/startFloorCells
+          m = multi
+          floorStartPos*=multi
+          floorEndPos*=multi
+        }
+        console.log("floor:", startFloor, endFloor, "Pos:", startPos, endPos, "floor Pos:", floorStartPos, floorEndPos, "multi", m)
 
-
-
-    /*room.addConnection(this.floorNumber, this.currentRoomNumber < this.roomAmount ? this.currentRoomNumber+1 : 1)
-    room.addConnection(this.floorNumber, this.currentRoomNumber > 1 ? this.currentRoomNumber-1 : this.roomAmount)
-    if (this.floorNumber > 1) {
-      room.addConnection(this.floorNumber - 1, Math.ceil(this.currentRoomNumber / multiplier))
-    }
-    if (numberOfOutwardConnections > 0) {
-      for (let i = 1; i <= numberOfOutwardConnections; i++) {
-        room.addConnection(this.floorNumber + 1, (this.currentRoomNumber - 1) * numberOfOutwardConnections + i)
+        for(let j = floorStartPos; j < floorEndPos; j++){
+          if(this.cells[i][j%cellsFloor].room != null){
+            console.log("Fail")
+            continue roomLoop;
+          }
+        }
       }
-    }*/
+      console.log("Success")
+
+      room = new Room(this.currentRoomNumber, startFloor, endFloor, startPos, endPos)
+
+      for (let i = startFloor; i < endFloor; i++){
+        let floorStartPos = startPos
+        let floorEndPos = endPos
+        let cellsFloor = this.cells[i].length
+        if(cellsFloor != startFloorCells){
+          let multi = cellsFloor/startFloorCells
+          floorStartPos*=multi
+          floorEndPos*=multi
+        }
+        //console.log(startPos, floorStartPos , "end", endPos, floorEndPos, "mult:")
+
+        for(let j = floorStartPos; j < floorEndPos; j++){
+          let cell = this.cells[i][j%cellsFloor]
+          cell.room = room
+          if(i == startFloor && j == floorStartPos){
+            if(i != (endFloor-1)){
+              cell.sidesInternal[CELL_SIDES.TOP] = false
+            }
+            if(j != (floorEndPos-1)){
+              cell.sidesInternal[CELL_SIDES.END] = false
+            }
+          }
+          else if(i == startFloor && j != (floorEndPos-1)){
+            cell.sidesInternal[CELL_SIDES.START] = false
+            cell.sidesInternal[CELL_SIDES.END] = false
+            if(i != (endFloor-1)){
+              cell.sidesInternal[CELL_SIDES.TOP] = false
+            }
+          }
+          else if(i == startFloor && j == (floorEndPos-1)){
+            if(i != (endFloor-1)){
+              cell.sidesInternal[CELL_SIDES.TOP] = false
+            }
+            if(j != floorStartPos){
+              cell.sidesInternal[CELL_SIDES.START] = false
+            }
+          }
+          else if(i != (endFloor-1) && j == floorStartPos){
+            cell.sidesInternal[CELL_SIDES.TOP] = false
+            cell.sidesInternal[CELL_SIDES.BOTTOM] = false
+            if(j != (floorEndPos-1)){
+              cell.sidesInternal[CELL_SIDES.END] = false
+            }
+          }
+          else if(i != (endFloor-1) && j != (floorEndPos-1)){
+            cell.sidesInternal = [false, false, false, false]
+          }
+          else if(i != (endFloor-1) && j == (floorEndPos-1)){
+            cell.sidesInternal[CELL_SIDES.TOP] = false
+            cell.sidesInternal[CELL_SIDES.BOTTOM] = false
+            if(j != startPos){
+              cell.sidesInternal[CELL_SIDES.START] = false
+            }
+          }
+          else if(j == floorStartPos){
+            if(i != startFloor){
+              cell.sidesInternal[CELL_SIDES.BOTTOM] = false
+            }
+            if(j != (floorEndPos-1)){
+              cell.sidesInternal[CELL_SIDES.END] = false
+            }
+          }
+          else if(j != (floorEndPos -1)){
+            cell.sidesInternal[CELL_SIDES.START] = false
+            cell.sidesInternal[CELL_SIDES.END] = false
+            if(i != startFloor){
+              cell.sidesInternal[CELL_SIDES.BOTTOM] = false
+            }
+          }
+          else {
+            if(i != startFloor){
+              cell.sidesInternal[CELL_SIDES.BOTTOM] = false
+            }
+            if(j != floorStartPos){
+              cell.sidesInternal[CELL_SIDES.START] = false
+            }
+
+          }
+
+        }
+      }
+
+
+
+    }
     return room
   }
 }
 
 export default class Room {
-  //connections: RoomConnection[]
   id: number
   startFloor: number
   endFloor: number
@@ -66,29 +161,5 @@ export default class Room {
     this.endFloor = endFloor
     this.startPos = startPos
     this.endPos = endPos
-
-    /*
-    this.id = {
-      floorNumber: floorId,
-      roomNumber: roomId
-    }
-    this.connections = []*/
   }
-  /*
-    addConnection(floorNumber: number, roomNumber: number, open: boolean = false) {
-      this.connections.push({
-        roomId: {
-          floorNumber: floorNumber,
-          roomNumber: roomNumber
-        },
-        isOpen: open
-      })
-    }
-
-    removeConnection(roomId: RoomId) {
-      let roomConnection = this.connections.find(conn => conn.roomId.roomNumber === roomId.roomNumber && conn.roomId.floorNumber === roomId.floorNumber)
-      if (roomConnection) {
-        this.connections.splice(this.connections.indexOf(roomConnection), 1)
-      }
-    }*/
 }

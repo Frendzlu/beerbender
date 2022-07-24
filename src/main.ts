@@ -3,12 +3,12 @@ import {Point, toCartesian} from "./Geometry";
 import {PI2} from "./consts";
 
 let x = new World({
-	floorAmount: 10,
+	floorAmount: 15,
 	worldOptions: {
 		minimalCellSize: Math.PI/2,
 		cellNumberMultiplier: 2,
 	},
-	roomAmount: 10,
+	roomAmount: 15,
 })
 console.log(x)
 
@@ -31,104 +31,60 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	ctx.fillStyle = "white"
 	ctx.fillRect(0,0,canvas.width,canvas.height)
 	ctx.strokeStyle = "black"
-	ctx.arc(center.x, center.y, centerpieceRadius , 0, 2*Math.PI)
+
+	ctx.moveTo(center.x, center.y)
+	ctx.lineTo(center.x + floorHeight*(world.floorAmount+1), center.y)
 	ctx.stroke()
 
-	console.log(world.rooms)
-	for (let room of world.rooms){
 
-		let maxCellsOnFloorExact = ((room.startFloor*2*Math.PI)/world.worldOptions.minimalCellSize)
-		let pow = Math.floor(Math.log2(maxCellsOnFloorExact) / Math.log2(world.worldOptions.cellNumberMultiplier))
-		let maxCellsOnFlorCapped = world.worldOptions.cellNumberMultiplier**pow
+	console.log(world)
+	ctx.globalAlpha = 0.2
+	world.cells.forEach((cells, i) => {
+		cells.forEach((cell, j) => {
+			ctx.strokeStyle = cell.color
+			const {bottom, end, top, start} = cell.sides
+			if(bottom){
+				ctx.beginPath()
+				ctx.arc(center.x, center.y, i*floorHeight, PI2*(j/cells.length), PI2*((j+1)/cells.length))
+				ctx.stroke()
+			}
+			if(end){
+				ctx.beginPath()
+				let {x, y} = toCartesian({r: i*floorHeight, angle: PI2*((j+1)/cells.length)})
+				ctx.moveTo(center.x + x, center.y + y);
+				let {x: x2, y: y2} = toCartesian({r: (i + 1)*floorHeight, angle: PI2*((j+1)/cells.length)})
+				ctx.lineTo(center.x + x2, center.y + y2)
+				ctx.stroke()
+			}
+			if(top){
+				ctx.beginPath()
+				ctx.arc(center.x, center.y, (i + 1)*floorHeight, PI2*(j/cells.length), PI2*((j+1)/cells.length))
+				ctx.stroke()
+			}
+			if(start){
+				ctx.beginPath()
+				let {x, y} = toCartesian({r: (i+ 1)*floorHeight, angle: PI2*(j/cells.length)})
+				ctx.moveTo(center.x + x, center.y + y);
+				let {x: x2, y: y2} = toCartesian({r: i*floorHeight, angle: PI2*(j/cells.length)})
+				ctx.lineTo(center.x + x2, center.y + y2)
+				ctx.stroke()
+			}
+		})
+	})
+	ctx.globalAlpha = 1
+
+	ctx.strokeStyle = "red"
+
+	world.rooms.forEach((room) => {
+		console.log("floor:", room.startFloor, room.endFloor, "Pos:", room.startPos, room.endPos)
+		let maxCellsOnFloor = world.cells[room.startFloor].length
 		ctx.beginPath()
-		ctx.arc(center.x, center.y, room.startFloor*floorHeight, PI2*(room.startPos/maxCellsOnFlorCapped), PI2*(room.endPos/maxCellsOnFlorCapped))
+		ctx.arc(center.x, center.y, room.startFloor*floorHeight, PI2*(room.startPos/maxCellsOnFloor), PI2*(room.endPos/maxCellsOnFloor))
+		let endTop = toCartesian({r: room.endFloor*floorHeight, angle: PI2*(room.endPos/maxCellsOnFloor)})
+		ctx.lineTo(center.x + endTop.x, center.y + endTop.y)
+		ctx.arc(center.x, center.y, room.endFloor*floorHeight, PI2*(room.endPos/maxCellsOnFloor),PI2*(room.startPos/maxCellsOnFloor), true)
+		let startBottom = toCartesian({r: room.startFloor*floorHeight, angle: PI2*(room.startPos/maxCellsOnFloor)})
+		ctx.lineTo(center.x + startBottom.x, center.y + startBottom.y)
 		ctx.stroke()
-
-	}
-
-	/*
-	let marked = false
-
-	for (let room of world.rooms) {
-
-		let initialLowPoint = new Geometry.Point(center.x, center.y - (centerpieceRadius + (floor.floorNumber - 1) * floorHeight))
-		let initialHighPoint = new Geometry.Point(center.x, center.y - (centerpieceRadius + floor.floorNumber * floorHeight))
-		let angle = 360 / floor.cells.length
-		let currentLeftLowPoint = initialLowPoint
-		let currentLeftHighPoint = initialHighPoint
-		let currentRightLowPoint = initialLowPoint.rotateAlong(angle, center)
-		let currentRightHighPoint = initialHighPoint.rotateAlong(angle, center)
-
-		for (let i = 1;  i <= floor.cells.length; i++) {
-
-			const cell = floor.cells[i-1]
-			if(!marked){
-				// marked = true
-				// helper green open mark
-				// ctx.beginPath()
-				// ctx.arc(currentLeftLowPoint.x + 10, currentLeftLowPoint.y - 10, 5, 0, 2*Math.PI)
-				// ctx.strokeStyle = "green"
-				// ctx.stroke()
-
-				for (let con of cell.connections){
-					ctx.beginPath()
-					if(con.cellId.floorNumber === floor.floorNumber){
-						// left wall
-						if(((i > 1 && con.cellId.cellNumber === i - 1) || (i === 1 && con.cellId.cellNumber === floor.cells.length)) && !con.isOpen){
-							ctx.moveTo(currentLeftLowPoint.x, currentLeftLowPoint.y)
-							ctx.lineTo(currentLeftHighPoint.x, currentLeftHighPoint.y)
-
-						}
-						// right wall
-						if(((i < floor.cells.length && con.cellId.cellNumber === i + 1) || (i === floor.cells.length && con.cellId.cellNumber === 1)) && !con.isOpen){
-							ctx.moveTo(currentRightLowPoint.x, currentRightLowPoint.y)
-							ctx.lineTo(currentRightHighPoint.x, currentRightHighPoint.y)
-						}
-					}
-					// inward wall
-					if(con.cellId.floorNumber < floor.floorNumber && !con.isOpen){
-						ctx.arc(center.x, center.y, centerpieceRadius + (floor.floorNumber - 1) * floorHeight,
-							Geometry.d2r(angle * (i-1)) - Math.PI/2,
-							Geometry.d2r(angle * i)- Math.PI/2)
-					}
-					// outward wall
-					if(con.cellId.floorNumber > floor.floorNumber && !con.isOpen){
-						ctx.arc(center.x, center.y, centerpieceRadius + floor.floorNumber * floorHeight,
-							Geometry.d2r(angle * (i-1)) - Math.PI/2,
-							Geometry.d2r(angle * i)- Math.PI/2)
-					}
-					ctx.strokeStyle = "black"
-					ctx.stroke()
-
-					if(con.isOpen) {
-						let destLowPoint = new Geometry.Point(center.x, center.y - (centerpieceRadius + (con.cellId.floorNumber - 1) * floorHeight))
-						destLowPoint = destLowPoint.rotateAlong(360 / world.floors[con.cellId.floorNumber - 1].cells.length * (con.cellId.cellNumber - 1), center)
-
-						// helper red open mark
-						// ctx.beginPath()
-						// ctx.arc(destLowPoint.x + 10, destLowPoint.y - 10, 5, 0, 2*Math.PI)
-						// ctx.strokeStyle = "red"
-						// ctx.stroke()
-					}
-
-				}
-
-			}
-
-			ctx.beginPath()
-			ctx.strokeStyle = "black"
-			// top floor outward
-			if(floor.floorNumber === world.floorAmount){
-				ctx.arc(center.x, center.y, centerpieceRadius + floor.floorNumber * floorHeight,
-					Geometry.d2r(angle * (i-1)) - Math.PI/2,
-					Geometry.d2r(angle * i)- Math.PI/2)
-			}
-			ctx.stroke()
-
-			currentLeftLowPoint = initialLowPoint.rotateAlong(angle * i, center)
-			currentLeftHighPoint = initialHighPoint.rotateAlong(angle * i, center)
-			currentRightLowPoint = initialLowPoint.rotateAlong(angle * (i + 1), center)
-			currentRightHighPoint = initialHighPoint.rotateAlong(angle * (i + 1), center)
-		}
-	}*/
+	})
 }

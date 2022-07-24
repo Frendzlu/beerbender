@@ -1,45 +1,43 @@
-export interface CellId {
-	floorNumber: number
-	cellNumber: number
-}
-
-export interface CellConnection {
-	cellId: CellId
-	isOpen: boolean
-}
-
 export class CellFactory {
-	currentCellNumber = 0
-	floorNumber: number
-	cellAmount: number
-
-	constructor(floorNumber: number, cellAmount: number) {
-		this.floorNumber = floorNumber
-		this.cellAmount = cellAmount
+	createCell(){
+		return new Cell("#000000")
 	}
+}
 
+import Room from "./Room";
 
-	createCell(multiplier: number, numberOfOutwardConnections: number) {
-		this.currentCellNumber++
-		let cell = new Cell(this.floorNumber, this.currentCellNumber)
-		cell.addConnection(this.floorNumber, this.currentCellNumber < this.cellAmount ? this.currentCellNumber+1 : 1, Math.random() > 0.5)
-		cell.addConnection(this.floorNumber, this.currentCellNumber > 1 ? this.currentCellNumber-1 : this.cellAmount, Math.random() > 0.5)
-		if (this.floorNumber > 1) {
-			cell.addConnection(this.floorNumber - 1, Math.ceil(this.currentCellNumber / multiplier), Math.random() > 0.5)
-		}
-		if (numberOfOutwardConnections > 0) {
-			for (let i = 1; i <= numberOfOutwardConnections; i++) {
-				cell.addConnection(this.floorNumber + 1, (this.currentCellNumber - 1) * numberOfOutwardConnections + i, Math.random() > 0.5)
-			}
-		}
-		return cell
-	}
+export type Sides = {
+	bottom: boolean,
+	end: boolean,
+	top: boolean,
+	start: boolean,
 }
 
 export default class Cell {
-	connections: CellConnection[]
-	id: CellId
+	room: Room | null
+	sidesInternal: [boolean, boolean, boolean, boolean] // bottom end top start
+	color: string
 
+	constructor(color: string) {
+		this.sidesInternal = [true, true, true, true]
+		this.color = color
+		this.room = null
+	}
+
+	public get sides() {
+		return {
+			bottom: this.sidesInternal[0],
+			end: this.sidesInternal[1],
+			top: this.sidesInternal[2],
+			start: this.sidesInternal[3],
+		}
+	}
+
+	public set sides({bottom, end, top, start}: Sides){
+		this.sidesInternal = [bottom, end, top, start]
+	}
+
+	/*
 	constructor(floorId: number, cellId: number) {
 		this.id = {
 			floorNumber: floorId,
@@ -63,5 +61,6 @@ export default class Cell {
 		if (cellConnection) {
 			this.connections.splice(this.connections.indexOf(cellConnection), 1)
 		}
-	}
+	}*/
 }
+

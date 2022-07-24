@@ -1,6 +1,3 @@
-import Floor from "./Floor";
-import Cell from "./Cell";
-
 export default class Utils {
 	static randomArrayElement<T extends any>(array: Array<T>): T | undefined {
 		if (array.length > 0) {
@@ -8,7 +5,7 @@ export default class Utils {
 		} else return undefined
 	}
 
-	static pickRandomMazeCell(floors: Floor[]): Cell {
+	/*static pickRandomMazeCell(floors: Floor[]): Cell {
 		return this.randomArrayElement(this.randomArrayElement(floors)?.rooms!)!
-	}
+	}*/
 }
