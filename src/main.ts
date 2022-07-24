@@ -3,16 +3,14 @@ import {Point, toCartesian} from "./Geometry";
 import {PI2} from "./consts";
 
 let x = new World({
-	floorAmount: 15,
+	floorAmount: 8,
 	worldOptions: {
 		minimalCellSize: Math.PI/2,
 		cellNumberMultiplier: 2,
 	},
-	roomAmount: 15,
+	roomAmount: 4,
 })
 console.log(x)
-
-
 
 
 let canvas = document.getElementById("testCanvas") as HTMLCanvasElement
@@ -35,7 +33,6 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	ctx.moveTo(center.x, center.y)
 	ctx.lineTo(center.x + floorHeight*(world.floorAmount+1), center.y)
 	ctx.stroke()
-
 
 	console.log(world)
 	ctx.globalAlpha = 0.2
@@ -71,9 +68,16 @@ function render(world: World, canvas: HTMLCanvasElement) {
 			}
 		})
 	})
+
+	ctx.beginPath()
+	ctx.arc(center.x, center.y, floorHeight, 0, PI2)
+	ctx.arc(center.x, center.y, floorHeight*(world.floorAmount+1), 0, PI2)
+	ctx.stroke()
+
 	ctx.globalAlpha = 1
 
 	ctx.strokeStyle = "red"
+	ctx.fillStyle = "blue"
 
 	world.rooms.forEach((room) => {
 		console.log("floor:", room.startFloor, room.endFloor, "Pos:", room.startPos, room.endPos)
@@ -85,6 +89,12 @@ function render(world: World, canvas: HTMLCanvasElement) {
 		ctx.arc(center.x, center.y, room.endFloor*floorHeight, PI2*(room.endPos/maxCellsOnFloor),PI2*(room.startPos/maxCellsOnFloor), true)
 		let startBottom = toCartesian({r: room.startFloor*floorHeight, angle: PI2*(room.startPos/maxCellsOnFloor)})
 		ctx.lineTo(center.x + startBottom.x, center.y + startBottom.y)
+		ctx.stroke()
+
+		ctx.beginPath()
+		let roomCenter = toCartesian({r: room.center.r*floorHeight, angle: room.center.angle*PI2})
+		ctx.arc(center.x + roomCenter.x, center.y + roomCenter.y, 2, 0, PI2)
+		ctx.fill()
 		ctx.stroke()
 	})
 }

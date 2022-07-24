@@ -1,6 +1,7 @@
 import Cell from "./Cell";
 import {FloorOptions} from "./World";
 import {CELL_SIDES} from "./consts";
+import {IPolarPoint} from "./Geometry";
 
 export interface RoomId {
   floorNumber: number
@@ -13,7 +14,6 @@ export interface RoomConnection {
 }
 
 export class RoomFactory {
-  currentRoomNumber = 0
   floorAmount: number
   worldOptions: FloorOptions
   cells: Cell[][]
@@ -26,38 +26,33 @@ export class RoomFactory {
 
 
   createRoom(): Room {
-    this.currentRoomNumber++
     let room = undefined
     roomLoop:
     while (room == undefined){
       let startFloor = Math.floor(this.floorAmount * Math.random()) + 1
-      let endFloor = Math.min(startFloor + Math.floor(Math.random() + 1.5), this.floorAmount + 1)
+      let endFloor = Math.min(startFloor + Math.floor(Math.random()*2 + 1.5), this.floorAmount + 1)
       let startFloorCells = this.cells[startFloor].length
       let startPos = Math.floor(startFloorCells * Math.random())
       let endPos = Math.floor(startPos + 1 + 5*Math.random())
+      endPos = Math.min(endPos, startPos + startFloorCells)
       for (let i = startFloor; i < endFloor; i++){
         let floorStartPos = startPos
         let floorEndPos = endPos
         let cellsFloor = this.cells[i].length
-        let m = undefined
         if(cellsFloor != startFloorCells){
           let multi = cellsFloor/startFloorCells
-          m = multi
           floorStartPos*=multi
           floorEndPos*=multi
         }
-        console.log("floor:", startFloor, endFloor, "Pos:", startPos, endPos, "floor Pos:", floorStartPos, floorEndPos, "multi", m)
 
         for(let j = floorStartPos; j < floorEndPos; j++){
           if(this.cells[i][j%cellsFloor].room != null){
-            console.log("Fail")
             continue roomLoop;
           }
         }
       }
-      console.log("Success")
 
-      room = new Room(this.currentRoomNumber, startFloor, endFloor, startPos, endPos)
+      room = new Room(startFloor, endFloor, startPos, endPos, startFloorCells)
 
       for (let i = startFloor; i < endFloor; i++){
         let floorStartPos = startPos
@@ -149,17 +144,17 @@ export class RoomFactory {
 }
 
 export default class Room {
-  id: number
   startFloor: number
   endFloor: number
   startPos: number
   endPos: number
+  center: IPolarPoint
 
-  constructor(id: number, startFloor: number, endFloor: number, startPos: number, endPos: number) {
-    this.id = id;
+  constructor(startFloor: number, endFloor: number, startPos: number, endPos: number, cellsOnFloor: number) {
     this.startFloor = startFloor
     this.endFloor = endFloor
     this.startPos = startPos
     this.endPos = endPos
+    this.center = {r: (startFloor+endFloor)/2, angle: (startPos+endPos)/(2*cellsOnFloor)}
   }
 }

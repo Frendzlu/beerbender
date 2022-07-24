@@ -1,5 +1,6 @@
 import Room, {RoomFactory} from "./Room";
 import Cell, {CellFactory} from "./Cell";
+import {IPolarPoint} from "./Geometry";
 
 export interface WorldGenerationData {
 	floorAmount: number
@@ -18,6 +19,7 @@ export class World {
 	cells: Cell[][]
 	floorAmount: number
 	roomAmount: number
+	centers: IPolarPoint[]
 	worldOptions: FloorOptions
 
 	constructor(options: WorldGenerationData) {
@@ -33,5 +35,6 @@ export class World {
 		})
 		let rf = new RoomFactory(options.floorAmount, options.worldOptions, this.cells)
 		this.rooms = Array(options.roomAmount).fill(undefined).map(() => rf.createRoom())
+		this.centers = this.rooms.map(r => r.center)
 	}
 }
