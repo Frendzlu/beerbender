@@ -1,2 +1,3 @@
-export {}
+export {PI2}
 const UNIVERSAL_GRAVITATIONAL_CONSTANT = 6.674 * 10**-11
+const PI2 = Math.PI*2

@@ -1,16 +1,19 @@
-import {Geometry} from "./Geometry";
-import Point = Geometry.Point;
 import {World} from "./World";
+import {Point, toCartesian} from "./Geometry";
+import {PI2} from "./consts";
 
 let x = new World({
-	floorAmount: 6,
-	floorOptions: {
-		minimalCellSize: 1/12,
+	floorAmount: 10,
+	worldOptions: {
+		minimalCellSize: Math.PI/2,
 		cellNumberMultiplier: 2,
-		initialCellNumber: 4
-	}
+	},
+	roomAmount: 10,
 })
 console.log(x)
+
+
+
 
 let canvas = document.getElementById("testCanvas") as HTMLCanvasElement
 
@@ -30,9 +33,23 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	ctx.strokeStyle = "black"
 	ctx.arc(center.x, center.y, centerpieceRadius , 0, 2*Math.PI)
 	ctx.stroke()
+
+	console.log(world.rooms)
+	for (let room of world.rooms){
+
+		let maxCellsOnFloorExact = ((room.startFloor*2*Math.PI)/world.worldOptions.minimalCellSize)
+		let pow = Math.floor(Math.log2(maxCellsOnFloorExact) / Math.log2(world.worldOptions.cellNumberMultiplier))
+		let maxCellsOnFlorCapped = world.worldOptions.cellNumberMultiplier**pow
+		ctx.beginPath()
+		ctx.arc(center.x, center.y, room.startFloor*floorHeight, PI2*(room.startPos/maxCellsOnFlorCapped), PI2*(room.endPos/maxCellsOnFlorCapped))
+		ctx.stroke()
+
+	}
+
+	/*
 	let marked = false
 
-	for (let floor of world.floors) {
+	for (let room of world.rooms) {
 
 		let initialLowPoint = new Geometry.Point(center.x, center.y - (centerpieceRadius + (floor.floorNumber - 1) * floorHeight))
 		let initialHighPoint = new Geometry.Point(center.x, center.y - (centerpieceRadius + floor.floorNumber * floorHeight))
@@ -113,5 +130,5 @@ function render(world: World, canvas: HTMLCanvasElement) {
 			currentRightLowPoint = initialLowPoint.rotateAlong(angle * (i + 1), center)
 			currentRightHighPoint = initialHighPoint.rotateAlong(angle * (i + 1), center)
 		}
-	}
+	}*/
 }

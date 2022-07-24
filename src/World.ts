@@ -1,21 +1,26 @@
-import Floor, {FloorFactory, FloorOptions} from "./Floor";
-import {IPhysicalProperties} from "./Physics";
+import {FloorOptions} from "./Floor";
+import Room, {RoomFactory} from "./Room";
 
 export interface WorldGenerationData {
 	floorAmount: number
-	floorOptions?: Partial<FloorOptions>
-	physicalProperties?: Partial<IPhysicalProperties>
+	roomAmount: number
+	worldOptions: FloorOptions
+	//physicalProperties?: Partial<IPhysicalProperties>
 }
 
 export class World {
+	rooms: Room[]
 	floorAmount: number
-	floors: Floor[]
+	roomAmount: number
+	worldOptions: FloorOptions
 
 	constructor(options: WorldGenerationData) {
 		this.floorAmount = options.floorAmount
-		let ff = new FloorFactory(options.floorAmount, options.floorOptions)
-		this.floors = Array(options.floorAmount).fill(undefined).map(() => ff.createFloor())
+		this.roomAmount = options.roomAmount
+		this.worldOptions = options.worldOptions
+		let rf = new RoomFactory(options.floorAmount, options.worldOptions)
+		this.rooms = Array(options.roomAmount).fill(undefined).map(() => rf.createRoom())
+		//let ff = new FloorFactory(options.floorAmount, options.floorOptions)
+		//this.floors = Array(options.floorAmount).fill(undefined).map(() => ff.createFloor())
 	}
-
-
 }

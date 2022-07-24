@@ -1,7 +1,6 @@
 import Cell, {CellFactory} from "./Cell";
 
 export interface FloorOptions {
-	initialCellNumber: number
 	minimalCellSize: number
 	cellNumberMultiplier: number
 }
@@ -14,19 +13,17 @@ const defaultFloorOptions = {
 
 export class FloorFactory {
 	currentFloorId: number = 0
-	currentCellNumber: number
 	minCellSize: number
 	cellNumberMultiplier: number
 	maxFloors: number
 
 	constructor(maxFloors: number, options: Partial<FloorOptions> = defaultFloorOptions) {
 		this.minCellSize = options.minimalCellSize || defaultFloorOptions.minimalCellSize
-		this.currentCellNumber = options.initialCellNumber || defaultFloorOptions.initialCellNumber
 		this.cellNumberMultiplier = options.cellNumberMultiplier || defaultFloorOptions.cellNumberMultiplier
 		this.maxFloors = maxFloors
 	}
 
-	createFloor() {
+	createFloor(): Floor {
 		this.currentFloorId++
 		let outwardConnectionsAmount = 1
 		if (this.cellNumberMultiplier > 1){
