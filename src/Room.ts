@@ -29,7 +29,7 @@ export class RoomFactory {
     let room = undefined
     roomLoop:
     while (room == undefined){
-      let startFloor = Math.floor(this.floorAmount * Math.random()) + 1
+      let startFloor = Math.floor(this.floorAmount * Math.sqrt(Math.random())) + 1 // for sqrt look https://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly
       let endFloor = Math.min(startFloor + Math.floor(Math.random()*2 + 1.5), this.floorAmount + 1)
       let startFloorCells = this.cells[startFloor].length
       let startPos = Math.floor(startFloorCells * Math.random())

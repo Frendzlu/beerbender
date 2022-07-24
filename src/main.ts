@@ -3,12 +3,12 @@ import {Point, toCartesian} from "./Geometry";
 import {PI2} from "./consts";
 
 let x = new World({
-	floorAmount: 8,
+	floorAmount: 100,
 	worldOptions: {
-		minimalCellSize: Math.PI/2,
+		minimalCellSize: Math.PI/3,
 		cellNumberMultiplier: 2,
 	},
-	roomAmount: 4,
+	roomAmount: 800,
 })
 console.log(x)
 
@@ -23,8 +23,6 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	let minDim = (canvas.width < canvas.height ? canvas.width : canvas.height)
 	let floorHeight = ((minDim * 0.90) / 2) / (world.floorAmount + 1)
 	let center = new Point(canvas.width / 2, canvas.height/2)
-	let centerpieceRadius = floorHeight
-	console.log(centerpieceRadius, floorHeight)
 
 	ctx.fillStyle = "white"
 	ctx.fillRect(0,0,canvas.width,canvas.height)
@@ -34,7 +32,6 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	ctx.lineTo(center.x + floorHeight*(world.floorAmount+1), center.y)
 	ctx.stroke()
 
-	console.log(world)
 	ctx.globalAlpha = 0.2
 	world.cells.forEach((cells, i) => {
 		cells.forEach((cell, j) => {
@@ -80,7 +77,6 @@ function render(world: World, canvas: HTMLCanvasElement) {
 	ctx.fillStyle = "blue"
 
 	world.rooms.forEach((room) => {
-		console.log("floor:", room.startFloor, room.endFloor, "Pos:", room.startPos, room.endPos)
 		let maxCellsOnFloor = world.cells[room.startFloor].length
 		ctx.beginPath()
 		ctx.arc(center.x, center.y, room.startFloor*floorHeight, PI2*(room.startPos/maxCellsOnFloor), PI2*(room.endPos/maxCellsOnFloor))
@@ -95,6 +91,5 @@ function render(world: World, canvas: HTMLCanvasElement) {
 		let roomCenter = toCartesian({r: room.center.r*floorHeight, angle: room.center.angle*PI2})
 		ctx.arc(center.x + roomCenter.x, center.y + roomCenter.y, 2, 0, PI2)
 		ctx.fill()
-		ctx.stroke()
 	})
 }
