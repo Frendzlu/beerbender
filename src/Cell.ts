@@ -15,26 +15,26 @@ export type Sides = {
 
 export default class Cell {
 	room: Room | null
-	sidesInternal: [boolean, boolean, boolean, boolean] // bottom end top start
+	internalSides: [boolean, boolean, boolean, boolean] // bottom end top start
 	color: string
 
 	constructor(color: string) {
-		this.sidesInternal = [true, true, true, true]
+		this.internalSides = [true, true, true, true]
 		this.color = color
 		this.room = null
 	}
 
 	public get sides() {
 		return {
-			bottom: this.sidesInternal[0],
-			end: this.sidesInternal[1],
-			top: this.sidesInternal[2],
-			start: this.sidesInternal[3],
+			bottom: this.internalSides[0],
+			end: this.internalSides[1],
+			top: this.internalSides[2],
+			start: this.internalSides[3],
 		}
 	}
 
 	public set sides({bottom, end, top, start}: Sides){
-		this.sidesInternal = [bottom, end, top, start]
+		this.internalSides = [bottom, end, top, start]
 	}
 
 	/*
