@@ -1,6 +1,13 @@
 export interface IPoint {
   x: number,
-  y: number
+  y: number,
+}
+
+export function toCartesian({r, angle}: IPolarPoint): Point {
+  return new Point(
+    r * Math.cos(angle),
+    r * Math.sin(angle)
+  )
 }
 
 export interface IPolarPoint {
@@ -8,19 +15,78 @@ export interface IPolarPoint {
   angle: number
 }
 
-export function toCartesian({r, angle}: IPolarPoint): IPoint {
-  return {
-    x: r * Math.cos(angle),
-    y: r * Math.sin(angle)
+export class PolarPoint implements IPolarPoint {
+  angle: number;
+  r: number;
+
+  constructor(point: IPolarPoint)
+  constructor(r: number, angle: number)
+  constructor(...args: any) {
+    if (!args.length) {
+      this.r = 0
+      this.angle = 0
+    } else if (typeof args[0] == "number") {
+      this.r = args[0]
+      this.angle = args[1] || 0
+    } else {
+      this.r = args[0].r
+      this.angle = args[0].angle
+    }
   }
+
+  timesScalar(k: number): PolarPoint {
+    const p = new PolarPoint(this)
+    p.r *= k
+    return p;
+  }
+
+  timesAngle(angle: number): PolarPoint {
+    const p = new PolarPoint(this)
+    p.angle *= angle
+    return p;
+  }
+
+  timesScalarAndAngle(k: number, angle: number): PolarPoint {
+    const p = new PolarPoint(this)
+    p.angle *= angle
+    p.r *= k
+    return p;
+
+  }
+
+  static fromCartesian({x, y}: IPoint): PolarPoint {
+    return new PolarPoint({
+      r: Math.sqrt(x * x + y * y),
+      angle: 1 / Math.tan(y / x)
+    })
+  }
+
+  toCartesian(): Point {
+    return new Point(
+      this.r * Math.cos(this.angle),
+      this.r * Math.sin(this.angle)
+    )
+  }
+
 }
 
 export class Point implements IPoint {
   x: number
   y: number
 
-  constructor(x: number, y: number)
+  toTuple(): [number, number] {
+    return [this.x, this.y]
+  }
+
+  timesScalar(k: number) {
+    const p = new Point(this)
+    p.x *= k
+    p.y *= k
+    return p
+  }
+
   constructor(point: IPoint)
+  constructor(x: number, y: number)
   constructor(...args: any) {
     if (!args.length) {
       this.x = 0
@@ -39,10 +105,17 @@ export class Point implements IPoint {
   }
 
   rotate(angle: number) {
-    const θ = d2r(angle)
-    this.x = (this.x * Math.cos(θ) - this.y * Math.sin(θ))
-    this.y = (this.x * Math.sin(θ) + this.y * Math.cos(θ))
+    const theta = d2r(angle)
+    this.x = (this.x * Math.cos(theta) - this.y * Math.sin(theta))
+    this.y = (this.x * Math.sin(theta) + this.y * Math.cos(theta))
     return this
+  }
+
+  add({x, y}: IPoint): Point {
+    const p = new Point(this)
+    p.x += x
+    p.y += y
+    return p
   }
 
   rotateAlong(angle: number, anchor: IPoint) {

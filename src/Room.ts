@@ -1,7 +1,7 @@
 import Cell from "./Cell";
 import {WorldOptions} from "./World";
-import {CELL_SIDES} from "./consts";
-import {IPolarPoint} from "./Geometry";
+import {CELL_SIDES, PI2} from "./consts";
+import {PolarPoint} from "./Geometry";
 
 export interface RoomId {
   floorNumber: number
@@ -179,13 +179,13 @@ export default class Room {
   endFloor: number
   startPos: number
   endPos: number
-  center: IPolarPoint
+  center: PolarPoint
 
   constructor(startFloor: number, endFloor: number, startPos: number, endPos: number, startFloorCells: number) {
     this.startFloor = startFloor
     this.endFloor = endFloor
     this.startPos = startPos
     this.endPos = endPos
-    this.center = {r: (startFloor + endFloor) / 2, angle: (startPos + endPos) / (2 * startFloorCells)}
+    this.center = new PolarPoint({r: (startFloor + endFloor) / 2, angle: (startPos + endPos) * PI2 / (2 * startFloorCells)})
   }
 }
