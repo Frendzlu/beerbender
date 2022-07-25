@@ -24,6 +24,13 @@ export class PolarPoint implements IPolarPoint {
     }
   }
 
+  static fromCartesian({x, y}: IPoint): PolarPoint {
+    return new PolarPoint({
+      r: Math.sqrt(x * x + y * y),
+      angle: 1 / Math.tan(y / x)
+    })
+  }
+
   timesScalar(k: number): PolarPoint {
     const p = new PolarPoint(this)
     p.r *= k
@@ -44,18 +51,10 @@ export class PolarPoint implements IPolarPoint {
 
   }
 
-  static fromCartesian({x, y}: IPoint): PolarPoint {
-    return new PolarPoint({
-      r: Math.sqrt(x * x + y * y),
-      angle: 1 / Math.tan(y / x)
-    })
-  }
-
   toCartesian(): Point {
     return new Point(
       this.r * Math.cos(this.angle),
       this.r * Math.sin(this.angle)
     )
   }
-
 }

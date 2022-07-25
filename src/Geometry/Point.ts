@@ -1,4 +1,5 @@
-import {d2r, Line} from "./Geometry";
+import {d2r} from "./Geometry";
+import {Line} from "./Line";
 
 export interface IPoint {
   x: number,
@@ -8,17 +9,6 @@ export interface IPoint {
 export class Point implements IPoint {
   x: number
   y: number
-
-  toTuple(): [number, number] {
-    return [this.x, this.y]
-  }
-
-  timesScalar(k: number) {
-    const p = new Point(this)
-    p.x *= k
-    p.y *= k
-    return p
-  }
 
   constructor(point: IPoint)
   constructor(x: number, y: number)
@@ -33,6 +23,17 @@ export class Point implements IPoint {
       this.x = args[0].x
       this.y = args[0].y
     }
+  }
+
+  toTuple(): [number, number] {
+    return [this.x, this.y]
+  }
+
+  timesScalar(k: number) {
+    const p = new Point(this)
+    p.x *= k
+    p.y *= k
+    return p
   }
 
   relativeTo(point: IPoint) {

@@ -1,7 +1,7 @@
 import Cell from "./Cell";
 import {WorldOptions} from "./World";
-import {CELL_SIDES, PI2} from "./consts";
-import {PolarPoint} from "./Geometry/PolarPoint";
+import {CELL_SIDES, PI2} from "../consts";
+import {PolarPoint} from "../Geometry/PolarPoint";
 
 export interface RoomId {
   floorNumber: number

@@ -1,6 +1,6 @@
 import Cell from "./Cell";
-import Item from "./Item";
-import {MappedEnum} from "./Generics";
+import Item from "../Item";
+import {MappedEnum} from "../Generics";
 
 enum RoomType {
 	Normal = "Normal",

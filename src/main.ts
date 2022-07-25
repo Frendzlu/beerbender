@@ -1,4 +1,4 @@
-import {World} from "./World";
+import {World} from "./World/World";
 import {PI2} from "./consts";
 import {Point} from "./Geometry/Point";
 import {PolarPoint} from "./Geometry/PolarPoint";
@@ -13,13 +13,11 @@ const x = new World({
 })
 console.log(x)
 
-
 const canvas = document.getElementById("testCanvas") as HTMLCanvasElement
 
 x.triangulate()
 
 render(x, canvas)
-
 
 function render(world: World, canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d", {alpha: false})!
@@ -93,7 +91,6 @@ function render(world: World, canvas: HTMLCanvasElement) {
     ctx.beginPath()
     const roomCenter = new PolarPoint({r: room.center.r * floorHeight, angle: room.center.angle}).toCartesian()
     ctx.arc(center.x + roomCenter.x, center.y + roomCenter.y, 2, 0, PI2)
-    console.log(roomCenter)
     ctx.fill()
   })
 
@@ -120,7 +117,5 @@ function render(world: World, canvas: HTMLCanvasElement) {
       ctx.lineTo(...c[0].toTuple())
       ctx.stroke()
     })
-    //console.log(coordinates, world.centers.map(c => c.timesScalar(floorHeight).toCartesian()))
-
   }
 }
