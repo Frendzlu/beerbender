@@ -47,7 +47,7 @@ class Lore implements IRoom {
 	height: number;
 	type = RoomType.Lore;
 	width: number;
-	displayedLore: string = "I have no fucking clue"
+	displayedLore = "I have no fucking clue"
 }
 /*
 class Lore implements IRoom {

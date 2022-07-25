@@ -27,7 +27,7 @@
         "after": true
       }
     ],
-    "space-before-function-paren": ["error", "always"],
+    "space-before-function-paren": ["error", "never"],
     "func-call-spacing": ["error", "never"],
     "space-before-blocks": "error",
     "comma-spacing": "error",

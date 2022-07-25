@@ -22,7 +22,7 @@ export class World {
 	centers: IPolarPoint[]
 	worldOptions: WorldOptions
 
-	constructor (options: WorldGenerationData) {
+	constructor(options: WorldGenerationData) {
 		this.floorAmount = options.floorAmount
 		this.roomAmount = options.roomAmount
 		this.worldOptions = options.worldOptions

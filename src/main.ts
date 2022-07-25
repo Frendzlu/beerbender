@@ -18,7 +18,7 @@ const canvas = document.getElementById("testCanvas") as HTMLCanvasElement
 render(x, canvas)
 
 
-function render (world: World, canvas: HTMLCanvasElement) {
+function render(world: World, canvas: HTMLCanvasElement) {
 	const ctx = canvas.getContext("2d", { alpha: false })!
 	const minDim = (canvas.width < canvas.height ? canvas.width : canvas.height)
 	const floorHeight = ((minDim * 0.90) / 2) / (world.floorAmount + 1)

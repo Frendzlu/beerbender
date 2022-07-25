@@ -32,13 +32,13 @@ export class RoomFactory {
   worldOptions: WorldOptions
   cells: Cell[][]
 
-  constructor (floorAmount: number, worldOptions: WorldOptions, cells: Cell[][]) {
+  constructor(floorAmount: number, worldOptions: WorldOptions, cells: Cell[][]) {
     this.floorAmount = floorAmount
     this.worldOptions = worldOptions
     this.cells = cells
   }
 
-  private generateRandomRoomParams (): RoomParams {
+  private generateRandomRoomParams(): RoomParams {
     // for sqrt look at https://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly
     const startFloor = Math.floor(this.floorAmount * Math.sqrt(Math.random())) + 1
     const startFloorCells = this.cells[startFloor].length
@@ -52,7 +52,7 @@ export class RoomFactory {
     }
   }
 
-  private isRoomColliding (roomParams: RoomParams): boolean {
+  private isRoomColliding(roomParams: RoomParams): boolean {
     for (let i = roomParams.startFloor; i < roomParams.endFloor; i++) {
       let floorStartPos = roomParams.startPos
       let floorEndPos = roomParams.endPos
@@ -72,7 +72,7 @@ export class RoomFactory {
     return false
   }
 
-  private getRecalculatedParamsForFloor (roomParams: RoomParams, floor: number): FloorParams {
+  private getRecalculatedParamsForFloor(roomParams: RoomParams, floor: number): FloorParams {
     let floorStartPos = roomParams.startPos
     let floorEndPos = roomParams.endPos
     const floorCells = this.cells[floor].length
@@ -88,7 +88,7 @@ export class RoomFactory {
     }
   }
 
-  createRoom (): Room {
+  createRoom(): Room {
     let roomParams = this.generateRandomRoomParams()
 
     while (this.isRoomColliding(roomParams)) {
@@ -181,7 +181,7 @@ export default class Room {
   endPos: number
   center: IPolarPoint
 
-  constructor (startFloor: number, endFloor: number, startPos: number, endPos: number, startFloorCells: number) {
+  constructor(startFloor: number, endFloor: number, startPos: number, endPos: number, startFloorCells: number) {
     this.startFloor = startFloor
     this.endFloor = endFloor
     this.startPos = startPos
