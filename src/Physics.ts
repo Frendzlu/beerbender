@@ -1,4 +1,4 @@
-import {Geometry} from "./Geometry";
+import {IPoint} from "./Geometry";
 
 export interface IPhysicalProperties {
 	mass: number
@@ -16,7 +16,7 @@ export type Dimensions = {
 }
 
 export type PVector = {
-	anchorPoint: Geometry.IPoint
+	anchorPoint: IPoint
 	value: number
 	angle: number // angle from -180 to 180, zero being 12 o'clock
 }
