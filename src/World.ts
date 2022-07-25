@@ -22,18 +22,18 @@ export class World {
 	centers: IPolarPoint[]
 	worldOptions: WorldOptions
 
-	constructor(options: WorldGenerationData) {
+	constructor (options: WorldGenerationData) {
 		this.floorAmount = options.floorAmount
 		this.roomAmount = options.roomAmount
 		this.worldOptions = options.worldOptions
-		let cf = new CellFactory()
+		const cf = new CellFactory()
 		this.cells = Array(options.floorAmount +  1).fill(undefined).map((_, i) => {
-			let maxFloorCellsFromSize = ((i*2*Math.PI)/this.worldOptions.minimalCellSize)
-			let pow = Math.floor(Math.log2(maxFloorCellsFromSize) / Math.log2(this.worldOptions.cellNumberMultiplier))
-			let maxFloorCellsFromSizeAndMultiplier = this.worldOptions.cellNumberMultiplier**pow
+			const maxFloorCellsFromSize = ((i * 2 * Math.PI) / this.worldOptions.minimalCellSize)
+			const pow = Math.floor(Math.log2(maxFloorCellsFromSize) / Math.log2(this.worldOptions.cellNumberMultiplier))
+			const maxFloorCellsFromSizeAndMultiplier = this.worldOptions.cellNumberMultiplier ** pow
 			return Array(maxFloorCellsFromSizeAndMultiplier).fill(undefined).map(() => cf.createCell())
 		})
-		let rf = new RoomFactory(options.floorAmount, options.worldOptions, this.cells)
+		const rf = new RoomFactory(options.floorAmount, options.worldOptions, this.cells)
 		this.rooms = Array(options.roomAmount).fill(undefined).map(() => rf.createRoom())
 		this.centers = this.rooms.map(r => r.center)
 	}

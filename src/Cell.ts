@@ -1,5 +1,5 @@
 export class CellFactory {
-	createCell(){
+	createCell () {
 		return new Cell("#000000")
 	}
 }
@@ -18,13 +18,13 @@ export default class Cell {
 	internalSides: [boolean, boolean, boolean, boolean] // bottom end top start
 	color: string
 
-	constructor(color: string) {
+	constructor (color: string) {
 		this.internalSides = [true, true, true, true]
 		this.color = color
 		this.room = null
 	}
 
-	public get sides() {
+	public get sides () {
 		return {
 			bottom: this.internalSides[0],
 			end: this.internalSides[1],
@@ -33,7 +33,7 @@ export default class Cell {
 		}
 	}
 
-	public set sides({bottom, end, top, start}: Sides){
+	public set sides ({bottom, end, top, start}: Sides) {
 		this.internalSides = [bottom, end, top, start]
 	}
 
