@@ -15,8 +15,6 @@ console.log(x)
 
 const canvas = document.getElementById("testCanvas") as HTMLCanvasElement
 
-render(x, canvas)
-
 x.triangulate()
 
 render(x, canvas)
