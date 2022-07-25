@@ -1,6 +1,7 @@
 import Room, {RoomFactory} from "./Room";
 import Cell, {CellFactory} from "./Cell";
-import {IPolarPoint} from "./Geometry";
+import Delaunator from "delaunator";
+import {PolarPoint} from "../Geometry/PolarPoint";
 
 export interface WorldGenerationData {
 	floorAmount: number
@@ -19,8 +20,9 @@ export class World {
 	cells: Cell[][]
 	floorAmount: number
 	roomAmount: number
-	centers: IPolarPoint[]
+	centers: PolarPoint[]
 	worldOptions: WorldOptions
+	triangulation?: Uint32Array
 
 	constructor(options: WorldGenerationData) {
 		this.floorAmount = options.floorAmount
@@ -36,5 +38,10 @@ export class World {
 		const rf = new RoomFactory(options.floorAmount, options.worldOptions, this.cells)
 		this.rooms = Array(options.roomAmount).fill(undefined).map(() => rf.createRoom())
 		this.centers = this.rooms.map(r => r.center)
+	}
+
+	triangulate() {
+		const delaunay = new Delaunator(this.centers.map((p) => p.toCartesian().toTuple()).flat())
+		this.triangulation = delaunay.triangles
 	}
 }
