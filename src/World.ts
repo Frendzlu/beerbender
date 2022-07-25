@@ -1,7 +1,7 @@
 import Room, {RoomFactory} from "./Room";
 import Cell, {CellFactory} from "./Cell";
-import {PolarPoint} from "./Geometry";
 import Delaunator from "delaunator";
+import {PolarPoint} from "./Geometry/PolarPoint";
 
 export interface WorldGenerationData {
 	floorAmount: number

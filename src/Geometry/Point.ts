@@ -1,73 +1,8 @@
+import {d2r, Line} from "./Geometry";
+
 export interface IPoint {
   x: number,
   y: number,
-}
-
-export function toCartesian({r, angle}: IPolarPoint): Point {
-  return new Point(
-    r * Math.cos(angle),
-    r * Math.sin(angle)
-  )
-}
-
-export interface IPolarPoint {
-  r: number
-  angle: number
-}
-
-export class PolarPoint implements IPolarPoint {
-  angle: number;
-  r: number;
-
-  constructor(point: IPolarPoint)
-  constructor(r: number, angle: number)
-  constructor(...args: any) {
-    if (!args.length) {
-      this.r = 0
-      this.angle = 0
-    } else if (typeof args[0] == "number") {
-      this.r = args[0]
-      this.angle = args[1] || 0
-    } else {
-      this.r = args[0].r
-      this.angle = args[0].angle
-    }
-  }
-
-  timesScalar(k: number): PolarPoint {
-    const p = new PolarPoint(this)
-    p.r *= k
-    return p;
-  }
-
-  timesAngle(angle: number): PolarPoint {
-    const p = new PolarPoint(this)
-    p.angle *= angle
-    return p;
-  }
-
-  timesScalarAndAngle(k: number, angle: number): PolarPoint {
-    const p = new PolarPoint(this)
-    p.angle *= angle
-    p.r *= k
-    return p;
-
-  }
-
-  static fromCartesian({x, y}: IPoint): PolarPoint {
-    return new PolarPoint({
-      r: Math.sqrt(x * x + y * y),
-      angle: 1 / Math.tan(y / x)
-    })
-  }
-
-  toCartesian(): Point {
-    return new Point(
-      this.r * Math.cos(this.angle),
-      this.r * Math.sin(this.angle)
-    )
-  }
-
 }
 
 export class Point implements IPoint {
@@ -136,7 +71,7 @@ export class Point implements IPoint {
   distanceFrom(line: Line): number
   distanceFrom(target: IPoint | Line) {
     if (target instanceof Line) {
-      let coeff = 0
+      let coeff
       if (Math.abs(target.coeffA) == Infinity) {
         coeff = Math.abs(this.x - target.A.x)
       } else if (Math.abs(target.coeffA) == 0) {
@@ -147,26 +82,4 @@ export class Point implements IPoint {
       return coeff
     } else return Math.sqrt((this.x - target.x) ** 2 + (this.y - target.y) ** 2)
   }
-}
-
-export class Line {
-  A: Point
-  B: Point
-  coeffA: number
-  coeffB: number
-
-  constructor(a: Point, b: Point) {
-    this.A = a
-    this.B = b
-    this.coeffA = (b.y - a.y) / (a.x - b.x)
-    this.coeffB = -a.y - a.x * this.coeffA
-  }
-
-  evalEquation(x: number) {
-    return (x * this.coeffA + this.coeffB) * -1
-  }
-}
-
-export function d2r(degrees: number) {
-  return degrees * Math.PI / 180
 }

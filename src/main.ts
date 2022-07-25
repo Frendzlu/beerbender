@@ -1,6 +1,7 @@
 import {World} from "./World";
-import {Point, toCartesian} from "./Geometry";
 import {PI2} from "./consts";
+import {Point} from "./Geometry/Point";
+import {PolarPoint} from "./Geometry/PolarPoint";
 
 const x = new World({
   floorAmount: 10,
@@ -46,9 +47,9 @@ function render(world: World, canvas: HTMLCanvasElement) {
       }
       if (end) {
         ctx.beginPath()
-        const {x, y} = toCartesian({r: i * floorHeight, angle: PI2 * ((j + 1) / cells.length)})
+        const {x, y} = new PolarPoint({r: i * floorHeight, angle: PI2 * ((j + 1) / cells.length)}).toCartesian()
         ctx.moveTo(center.x + x, center.y + y);
-        const {x: x2, y: y2} = toCartesian({r: (i + 1) * floorHeight, angle: PI2 * ((j + 1) / cells.length)})
+        const {x: x2, y: y2} = new PolarPoint({r: (i + 1) * floorHeight, angle: PI2 * ((j + 1) / cells.length)}).toCartesian()
         ctx.lineTo(center.x + x2, center.y + y2)
         ctx.stroke()
       }
@@ -59,9 +60,9 @@ function render(world: World, canvas: HTMLCanvasElement) {
       }
       if (start) {
         ctx.beginPath()
-        const {x, y} = toCartesian({r: (i + 1) * floorHeight, angle: PI2 * (j / cells.length)})
+        const {x, y} = new PolarPoint({r: (i + 1) * floorHeight, angle: PI2 * (j / cells.length)}).toCartesian()
         ctx.moveTo(center.x + x, center.y + y);
-        const {x: x2, y: y2} = toCartesian({r: i * floorHeight, angle: PI2 * (j / cells.length)})
+        const {x: x2, y: y2} = new PolarPoint({r: i * floorHeight, angle: PI2 * (j / cells.length)}).toCartesian()
         ctx.lineTo(center.x + x2, center.y + y2)
         ctx.stroke()
       }
@@ -82,15 +83,15 @@ function render(world: World, canvas: HTMLCanvasElement) {
     const maxCellsOnFloor = world.cells[room.startFloor].length
     ctx.beginPath()
     ctx.arc(center.x, center.y, room.startFloor * floorHeight, PI2 * (room.startPos / maxCellsOnFloor), PI2 * (room.endPos / maxCellsOnFloor))
-    const endTop = toCartesian({r: room.endFloor * floorHeight, angle: PI2 * (room.endPos / maxCellsOnFloor)})
+    const endTop = new PolarPoint({r: room.endFloor * floorHeight, angle: PI2 * (room.endPos / maxCellsOnFloor)}).toCartesian()
     ctx.lineTo(center.x + endTop.x, center.y + endTop.y)
     ctx.arc(center.x, center.y, room.endFloor * floorHeight, PI2 * (room.endPos / maxCellsOnFloor), PI2 * (room.startPos / maxCellsOnFloor), true)
-    const startBottom = toCartesian({r: room.startFloor * floorHeight, angle: PI2 * (room.startPos / maxCellsOnFloor)})
+    const startBottom = new PolarPoint({r: room.startFloor * floorHeight, angle: PI2 * (room.startPos / maxCellsOnFloor)}).toCartesian()
     ctx.lineTo(center.x + startBottom.x, center.y + startBottom.y)
     ctx.stroke()
 
     ctx.beginPath()
-    const roomCenter = toCartesian({r: room.center.r * floorHeight, angle: room.center.angle})
+    const roomCenter = new PolarPoint({r: room.center.r * floorHeight, angle: room.center.angle}).toCartesian()
     ctx.arc(center.x + roomCenter.x, center.y + roomCenter.y, 2, 0, PI2)
     console.log(roomCenter)
     ctx.fill()

@@ -1,4 +1,4 @@
-import {IPoint} from "./Geometry";
+import {IPoint} from "./Geometry/Point";
 
 export interface IPhysicalProperties {
 	mass: number
