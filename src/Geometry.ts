@@ -10,8 +10,8 @@ export interface IPolarPoint {
 
 export function toCartesian({r, angle}: IPolarPoint): IPoint {
   return {
-    x: r*Math.cos(angle),
-    y: r*Math.sin(angle)
+    x: r * Math.cos(angle),
+    y: r * Math.sin(angle)
   }
 }
 
@@ -39,17 +39,17 @@ export class Point implements IPoint {
   }
 
   rotate(angle: number) {
-    let θ = d2r(angle)
+    const θ = d2r(angle)
     this.x = (this.x * Math.cos(θ) - this.y * Math.sin(θ))
     this.y = (this.x * Math.sin(θ) + this.y * Math.cos(θ))
     return this
   }
 
   rotateAlong(angle: number, anchor: IPoint) {
-    let relativePoint = this.relativeTo(anchor)
+    const relativePoint = this.relativeTo(anchor)
     let currentAngle = 0
     for (let i = 0; i < Math.abs(angle) / 0.1; i++) {
-      let toRotate = (angle / Math.abs(angle)) * 0.1
+      const toRotate = (angle / Math.abs(angle)) * 0.1
       relativePoint.rotate(toRotate)
       currentAngle += toRotate
     }
